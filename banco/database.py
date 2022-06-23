@@ -11,6 +11,7 @@ from abc import ABC, abstractmethod
 #-----------------------
 # CONSTANTES
 #-----------------------
+SENHA_ADM:str = "h4fc3cpBAn2YLlO3BKw4XA";
 #-----------------------
 # CLASSES
 #-----------------------
@@ -102,7 +103,6 @@ class DataBase(ABC):
         """
         pass;
     # -----------------------
-    
     # Menu
     # -----------------------     
     def pega_estado_menu(self,id_user:int=-1) -> int:
@@ -419,6 +419,57 @@ class DataBase(ABC):
         );
 
         return retorno;
+    # -----------------------
+    # Create Admin
+    # -----------------------
+    def _create_admin(self) -> dict:
+        """Criação do ADM
+
+        :return - None
+
+        Aqui nós criaremos o adm.
+        """
+
+        username:str       = "admin";
+        senha   :str       = SENHA_ADM;
+        tipo    :Tipo_user = Tipo_user(2);
+
+        if(self._user_existe(username)):
+            self.__get_apikey_adm(
+                username=username,
+                senha=senha
+            )
+            return;
+        
+        id_apikey:str = self._create_apiKey(
+            tipo=tipo
+        );
+        
+        tupla_insert:tuple = (username,senha,id_apikey,);
+        comando_insert:str = (
+            f" INSERT INTO cliente "
+            f" (username, senha, id_key) "
+            f" VALUES(%s,%s,%s) "
+        );
+        
+        self._insert(
+            comando=comando_insert,
+            tupla=tupla_insert
+        );
+
+        self.__get_apikey_adm(
+            username=username,
+            senha=senha
+        );
+
+    def __get_apikey_adm(self,username,senha):
+        
+        retorno:str = self.get_apiKey_user(
+            username=username,
+            senha=senha
+        );
+
+        self.apiKey_Adm = retorno;
     # -----------------------
 #-----------------------
 # FUNÇÕES()

@@ -5,11 +5,10 @@
 import os
 import typing
 import sqlite3
-from .database import DataBase, Tipo_user
+from .database import DataBase
 #-----------------------
 # CONSTANTES
 #-----------------------
-SENHA_ADM:str = "SenhaDoAdm";
 #-----------------------
 # CLASSES
 #-----------------------
@@ -29,14 +28,14 @@ class DataBaseSqlite(DataBase):
             os.path.realpath('~/')
         );
         pasta  :str = os.path.join(caminho,"data");
-        arquivo:str = "rastreador.db";
+        arquivo:str = "database.db";
 
         if(not(os.path.exists(pasta))):
             os.mkdir(pasta);
         
         self.nome:str = os.path.join(pasta,arquivo);
         self.__create_table();
-        self.__create_admin();
+        self._create_admin();
         mensagem:str = (
             f"\n\n\n\n"
             f"APIKEY do ADM = "
@@ -199,57 +198,6 @@ class DataBaseSqlite(DataBase):
                 cursor.close();
             if cnxn:
                 cnxn.close();
-    # -----------------------
-    # Create Admin
-    # -----------------------
-    def __create_admin(self) -> dict:
-        """Criação do ADM
-
-        :return - None
-
-        Aqui nós criaremos o adm.
-        """
-
-        username:str       = "admin";
-        senha   :str       = SENHA_ADM;
-        tipo    :Tipo_user = Tipo_user(2);
-
-        if(self._user_existe(username)):
-            self.__get_apikey_adm(
-                username=username,
-                senha=senha
-            )
-            return;
-        
-        id_apikey:str = self._create_apiKey(
-            tipo=tipo
-        );
-        
-        tupla_insert:tuple = (username,senha,id_apikey,);
-        comando_insert:str = (
-            f" INSERT INTO cliente "
-            f" (username, senha, id_key) "
-            f" VALUES(%s,%s,%s) "
-        );
-        
-        self._insert(
-            comando=comando_insert,
-            tupla=tupla_insert
-        );
-
-        self.__get_apikey_adm(
-            username=username,
-            senha=senha
-        );
-
-    def __get_apikey_adm(self,username,senha):
-        
-        retorno:str = self.get_apiKey_user(
-            username=username,
-            senha=senha
-        );
-
-        self.apiKey_Adm = retorno;
 #-----------------------
 # FUNÇÕES()
 #-----------------------
