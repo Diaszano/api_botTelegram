@@ -27,12 +27,19 @@ class Tipo_user(Enum):
     Administrador = 2;
 
 class User(BaseModel): 
-    username: str
-    senha   : str
+    username:str
+    senha   :str
+
+class Menu(BaseModel):
+    id_user:int
+    APIKEY :str
+
+class Update_menu(Menu):
+    estado:int
 
 class Insert_user(User):
-    APIKEY  : str
-    tipo    : Tipo_user
+    APIKEY:str
+    tipo  :Tipo_user
 
 class DataBase(ABC):
     # -----------------------
@@ -112,13 +119,16 @@ class DataBase(ABC):
         :param  - id_user:str
         :return - estado:int
 
-        Aqui procuraremos o estado do user no programa
+        retornamos '-1' quando não existe o user. 
+
+        Aqui procuraremos o estado do user no programa.
         """
         retorno:int = -1;
         if(not isinstance(id_user,int)):
             return retorno;
         elif(id_user <= 0):
             return retorno;
+
         comando_select:str = (
             f" SELECT estado "
             f" FROM menu "
@@ -128,26 +138,66 @@ class DataBase(ABC):
         retorno_select:list[str] = self._select(
             comando=comando_select
         );
+        if(retorno_select != []):
+            retorno = int(retorno_select[0][0]);
+            print(retorno)
+        return retorno;
+    
+    def __verifica_estado_menu(self,id_user:int=-1) -> bool:
+        """Pega o estado do menu principal
 
-        if(retorno_select == []):
-            comando_insert:str = (
-                " INSERT INTO menu "
-                " (id_user, estado) "
-                " VALUES(%s, 0) "
-            );
-            tupla_insert:tuple = (id_user,);
-            self._insert(
-                comando=comando_insert,
-                tupla=tupla_insert
-            )
-            retorno = self.pega_estado_menu(
-                id_user=id_user
-            );
-        else:
-            retorno = int(retorno[0][0]);
+        :param  - id_user:str
+        :return - estado:int
+
+        retornamos False quando não existe o user. 
+
+        Aqui procuraremos o estado do user no programa.
+        """
+        retorno:bool = False;
+        if(not isinstance(id_user,int)):
+            return retorno;
+        elif(id_user <= 0):
+            return retorno;
+
+        comando_select:str = (
+            f" SELECT * "
+            f" FROM menu "
+            f" WHERE id_user = {id_user}"
+        );
+
+        retorno_select:list[str] = self._select(
+            comando=comando_select
+        );
+        if(retorno_select != []):
+            retorno = True;
         return retorno;
 
-    def atualiza_estado_menu(self,id_user:int=-1,estado:int = 0) -> None:
+    def cria_estado_menu(self,id_user:int=-1) -> bool:
+        """Cria estado do menu
+
+        :param  - id_user:str
+        :return - estado:int
+
+        Aqui iremos criar o estado do menu do programa.
+        """
+        retorno:bool = False;
+        if(self.__verifica_estado_menu(id_user)):
+            return retorno;
+
+        comando_insert:str = (
+            " INSERT INTO menu "
+            " (id_user, estado) "
+            " VALUES(%s, 0) "
+        );
+        tupla_insert:tuple = (id_user,);
+        self._insert(
+            comando=comando_insert,
+            tupla=tupla_insert
+        )
+
+        return not retorno;
+
+    def atualiza_estado_menu(self,id_user:int=-1,estado:int=0) -> bool:
         """Atualiza o estado do menu principal
 
         :param  - id_user:str
@@ -156,10 +206,10 @@ class DataBase(ABC):
 
         Aqui atualizaremos o estado do user
         """
-        if(not isinstance(id_user,int)):
-            return;
-        elif(id_user <= 0):
-            return;
+        retorno:bool = False;
+        if(not self.__verifica_estado_menu(id_user)):
+            print("oi")
+            return retorno;
         comando_update:str = ( 
             f" UPDATE menu "
             f" SET estado={estado} "
@@ -168,6 +218,7 @@ class DataBase(ABC):
         self._update(
             comando=comando_update
         );
+        return not retorno;
     # -----------------------
     # Auth
     # ----------------------- 
@@ -201,8 +252,8 @@ class DataBase(ABC):
             retorno = True;
         return retorno;
     
-    def _login_api(self,username:str,senha:str) -> bool:
-        """Login api
+    def _login_api_senha(self,username:str,senha:str) -> bool:
+        """Login api com senha
 
         :param  - username:str
         :param  - senha:str
@@ -245,7 +296,7 @@ class DataBase(ABC):
         Aqui nós pegaremos a apiKey do user.
         """
         retorno:Union[str,None] = None;
-        if(not self._login_api(username,senha)):
+        if(not self._login_api_senha(username,senha)):
             return retorno;
         
         comando_select:str = (
@@ -295,6 +346,18 @@ class DataBase(ABC):
             retorno = True;
         return retorno;
     
+    def login_api_key(self,apikey:str) -> bool:
+        """Login api com senha
+
+        :param  - apikey:str
+        :return - bool
+
+        Retorna True se efetuou o login.
+
+        Aqui checaremos se o user que está utilizando a api existe.
+        """
+        return not self._checar_apiKey(apikey=apikey);
+
     def _checar_privilegios(self,apikey:str) -> bool:
         """Checar privilégios
 

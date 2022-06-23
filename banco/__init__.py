@@ -2,6 +2,7 @@
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
+from .database import Menu
 from .database import User
 from .database import Insert_user
 from .databaseSqlite import DataBaseSqlite
