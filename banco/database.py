@@ -11,7 +11,8 @@ from abc import ABC, abstractmethod
 #-----------------------
 # CONSTANTES
 #-----------------------
-SENHA_ADM:str = "h4fc3cpBAn2YLlO3BKw4XA";
+USERNAME_ADM:str = "ADM";
+SENHA_ADM   :str = "h4fc3cpBAn2YLlO3BKw4XA";
 #-----------------------
 # CLASSES
 #-----------------------
@@ -430,15 +431,12 @@ class DataBase(ABC):
         Aqui nós criaremos o adm.
         """
 
-        username:str       = "admin";
+        username:str       = USERNAME_ADM;
         senha   :str       = SENHA_ADM;
         tipo    :Tipo_user = Tipo_user(2);
 
         if(self._user_existe(username)):
-            self.__get_apikey_adm(
-                username=username,
-                senha=senha
-            )
+            self.__get_apikey_adm();
             return;
         
         id_apikey:str = self._create_apiKey(
@@ -457,16 +455,13 @@ class DataBase(ABC):
             tupla=tupla_insert
         );
 
-        self.__get_apikey_adm(
-            username=username,
-            senha=senha
-        );
+        self.__get_apikey_adm();
 
-    def __get_apikey_adm(self,username,senha):
+    def __get_apikey_adm(self):
         
         retorno:str = self.get_apiKey_user(
-            username=username,
-            senha=senha
+            username=USERNAME_ADM,
+            senha=SENHA_ADM
         );
 
         self.apiKey_Adm = retorno;
