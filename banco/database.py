@@ -140,7 +140,7 @@ class DataBase(ABC):
         );
         if(retorno_select != []):
             retorno = int(retorno_select[0][0]);
-            print(retorno)
+            
         return retorno;
     
     def __verifica_estado_menu(self,id_user:int=-1) -> bool:

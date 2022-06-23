@@ -4,8 +4,6 @@
 #-----------------------
 from banco import *
 from fastapi import FastAPI
-
-from banco.database import Update_menu
 #-----------------------
 # CONSTANTES
 #-----------------------
@@ -63,14 +61,14 @@ def menu(info:Menu):
     """
     apikey :str = info.APIKEY;
     id_user:int = info.id_user;
-    retorno:dict = {}
+    retorno:dict = {};
     if(not db.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
     else:
         var_menu = db.pega_estado_menu(
             id_user=id_user
         );
-        if(var_menu <= 0):
+        if(var_menu < 0):
             retorno["Erro"] = "Cliente não existente";
         else:
             retorno["menu"] = var_menu;
@@ -84,7 +82,7 @@ def menu(info:Menu):
     """
     apikey :str = str(info.APIKEY);
     id_user:int = int(info.id_user);
-    retorno:dict = {}
+    retorno:dict = {};
     if(not db.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
     else:
@@ -106,9 +104,11 @@ def menu(info:Update_menu):
     apikey :str = str(info.APIKEY);
     id_user:int = int(info.id_user);
     estado :int = int(info.estado);
-    retorno:dict = {}
+    retorno:dict = {};
     if(not db.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
+    elif(estado < 0):
+        retorno["Erro"] = "Valor de estado do menu menor que zero";
     else:
         atualizado = db.atualiza_estado_menu(
             id_user=id_user,
