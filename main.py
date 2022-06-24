@@ -20,7 +20,7 @@ app = FastAPI()
 db = DataBaseSqlite();
 
 @app.get("/v1/auth")
-def auth(authenticationDto:User):
+async def auth(authenticationDto:User):
     """Pegar usuário
 
     Aqui pegaremos um usuário da api
@@ -35,7 +35,7 @@ def auth(authenticationDto:User):
     return retorno;
 
 @app.post("/v1/auth")
-def auth(authenticationDto:Insert_user):
+async def auth(authenticationDto:Insert_user):
     """Criação de usuários
 
     Aqui criaremos os usuários da api
@@ -54,7 +54,7 @@ def auth(authenticationDto:Insert_user):
     return retorno;
 
 @app.get("/v1/menu")
-def menu(info:Menu):
+async def menu(info:Menu):
     """Pegamos o estado do menu
 
     Aqui pegaremos o estado do user solicitado.
@@ -75,7 +75,7 @@ def menu(info:Menu):
     return retorno;
 
 @app.post("/v1/menu")
-def menu(info:Menu):
+async def menu(info:Menu):
     """Insere o estado do menu
 
     Aqui inserimos o estado do user solicitado.
@@ -96,7 +96,7 @@ def menu(info:Menu):
     return retorno;
 
 @app.put("/v1/menu")
-def menu(info:Update_menu):
+async def menu(info:Update_menu):
     """Atualiza o estado do menu
 
     Aqui atualizaremos o estado do user solicitado.
