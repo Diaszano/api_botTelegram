@@ -26,6 +26,9 @@ class Tipo_user(Enum):
     Padrao = 1;
     Administrador = 2;
 
+class Qrcode(BaseModel): 
+    link:str
+
 class User(BaseModel): 
     username:str
     senha   :str

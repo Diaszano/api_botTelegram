@@ -2,8 +2,11 @@
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
+import io
+import pyqrcode
 from banco import *
 from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 #-----------------------
 # CONSTANTES
 #-----------------------
@@ -118,5 +121,27 @@ async def menu(info:Update_menu):
             retorno["Sucesso"] = "Estado do menu modificado";
         else:
             retorno["Erro"] = "Estado do menu não modificado";
+    return retorno;
+
+@app.get("/v1/qrcode")
+async def gerador_qrcode(qrcode:Qrcode):
+    """Gerador de QRCode
+
+    Aqui nós geraremos um QRCode com o link enviado.
+    """
+    link = qrcode.link;
+    img  = io.BytesIO();
+    url  = pyqrcode.create(link);
+
+    url.png(img,scale=8);
+    img.seek(0);
+    
+    retorno = StreamingResponse(
+        content = img, 
+        media_type = "image/jpeg",
+        headers = {
+            'Content-Disposition': 'inline; filename="QRCode.jpg"'
+        }
+    );
     return retorno;
 #-----------------------

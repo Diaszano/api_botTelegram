@@ -4,6 +4,7 @@
 #-----------------------
 from .database import Menu
 from .database import User
+from .database import Qrcode
 from .database import Update_menu
 from .database import Insert_user
 from .databaseSqlite import DataBaseSqlite
