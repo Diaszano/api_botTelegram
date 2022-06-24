@@ -22,7 +22,7 @@ from fastapi.responses import StreamingResponse
 app = FastAPI()
 db = DataBaseSqlite();
 
-@app.get("/v1/auth")
+@app.get("/api/auth")
 async def auth(authenticationDto:User):
     """Pegar usuário
 
@@ -37,7 +37,7 @@ async def auth(authenticationDto:User):
         )
     return retorno;
 
-@app.post("/v1/auth")
+@app.post("/api/auth")
 async def auth(authenticationDto:Insert_user):
     """Criação de usuários
 
@@ -56,7 +56,7 @@ async def auth(authenticationDto:Insert_user):
     );
     return retorno;
 
-@app.get("/v1/menu")
+@app.get("/api/menu")
 async def menu(info:Menu):
     """Pegamos o estado do menu
 
@@ -77,7 +77,7 @@ async def menu(info:Menu):
             retorno["menu"] = var_menu;
     return retorno;
 
-@app.post("/v1/menu")
+@app.post("/api/menu")
 async def menu(info:Menu):
     """Insere o estado do menu
 
@@ -98,7 +98,7 @@ async def menu(info:Menu):
             retorno["Erro"] = "User já existente";
     return retorno;
 
-@app.put("/v1/menu")
+@app.put("/api/menu")
 async def menu(info:Update_menu):
     """Atualiza o estado do menu
 
@@ -123,7 +123,7 @@ async def menu(info:Update_menu):
             retorno["Erro"] = "Estado do menu não modificado";
     return retorno;
 
-@app.get("/v1/qrcode")
+@app.get("/api/qrcode")
 async def gerador_qrcode(qrcode:Qrcode):
     """Gerador de QRCode
 
