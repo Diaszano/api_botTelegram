@@ -5,17 +5,33 @@ Aqui nós criaremos os moldes do Banco de Dados utilizado pelo programa.
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
+import os
 import typing
 import secrets
 import configparser
 from enum import Enum
 from typing import Union
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, constr
 #-----------------------
 # CONSTANTES
 #-----------------------
-ARQUIVO_INI = './data/file.ini';
+NOME_ARQUIVO = "file.ini";
+CAMINHO_ARQUIVO = "./data";
+ARQUIVO_INI = (
+    f"{CAMINHO_ARQUIVO}/"
+    f"{NOME_ARQUIVO}"
+);
+if(not os.path.exists(CAMINHO_ARQUIVO)):
+    os.mkdir(CAMINHO_ARQUIVO);
+if(not os.path.isfile(ARQUIVO_INI)):
+    mensagem:str = (
+        f"O arquivo {NOME_ARQUIVO} "
+        f"não existe na pasta "
+        f"{CAMINHO_ARQUIVO}."
+    );
+    raise FileExistsError(mensagem);
+
 CONFIG = configparser.ConfigParser();
 CONFIG.read(ARQUIVO_INI);
 USERNAME_ADM:str = CONFIG.get("ADM","USERNAME");
@@ -65,8 +81,8 @@ class User(BaseModel):
     \n\tUsername do novo usuário.
     \n\tSenha do novo usuário.
     """
-    username:str = None;
-    senha   :str = None;
+    username:constr(max_length=30,min_length=5);
+    senha   :constr(max_length=30,min_length=5);
 
     @validator('username')
     def verificar_username(cls, username):
