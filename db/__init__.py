@@ -6,11 +6,7 @@ com o banco de dados.
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
-from .database import Menu
-from .database import User
-from .database import Qrcode
-from .database import Update_menu
-from .database import Insert_user
+from .database import Tipo_user
 from .databaseSqlite import DataBaseSqlite
 #-----------------------
 # CONSTANTES
