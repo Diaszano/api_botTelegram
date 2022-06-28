@@ -15,8 +15,9 @@ from pydantic import BaseModel, validator
 #-----------------------
 # CONSTANTES
 #-----------------------
+ARQUIVO_INI = './data/file.ini';
 CONFIG = configparser.ConfigParser();
-CONFIG.read('file.ini');
+CONFIG.read(ARQUIVO_INI);
 USERNAME_ADM:str = CONFIG.get("ADM","USERNAME");
 SENHA_ADM   :str = CONFIG.get("ADM","SENHA");
 #-----------------------
