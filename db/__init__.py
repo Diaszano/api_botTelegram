@@ -1,4 +1,8 @@
-"""Modulo do Banco de Dados"""
+"""Modulo do Banco de Dados
+
+Neste modulo iremos ter todas as conexões 
+com o banco de dados. 
+"""
 #-----------------------
 # BIBLIOTECAS
 #-----------------------

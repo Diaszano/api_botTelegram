@@ -4,7 +4,7 @@
 #-----------------------
 import io
 import pyqrcode
-from banco import *
+from db import *
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 #-----------------------
@@ -19,10 +19,10 @@ from fastapi.responses import StreamingResponse
 #-----------------------
 # Main()
 #-----------------------
-app = FastAPI()
-db = DataBaseSqlite();
+app   = FastAPI();
+banco = DataBaseSqlite();
 
-@app.get("/api/auth")
+@app.get("/auth")
 async def auth(authenticationDto:User):
     """Pegar usuário
 
@@ -31,13 +31,13 @@ async def auth(authenticationDto:User):
     username:str  = authenticationDto.username;
     senha   :str  = authenticationDto.senha;
     retorno :dict = {};
-    retorno["APIKEY"] = db.get_apiKey_user(
+    retorno["APIKEY"] = banco.get_apiKey_user(
             username=username,
             senha=senha
         )
     return retorno;
 
-@app.post("/api/auth")
+@app.post("/auth")
 async def auth(authenticationDto:Insert_user):
     """Criação de usuários
 
@@ -48,7 +48,7 @@ async def auth(authenticationDto:Insert_user):
     apikey  :str = authenticationDto.APIKEY;
     tipo    :str = authenticationDto.tipo;
     
-    retorno = db.create_user(
+    retorno = banco.create_user(
         username=username,
         senha=senha,
         tipo=tipo,
@@ -56,7 +56,7 @@ async def auth(authenticationDto:Insert_user):
     );
     return retorno;
 
-@app.get("/api/menu")
+@app.get("/api/bot_telegram/menu")
 async def menu(info:Menu):
     """Pegamos o estado do menu
 
@@ -65,10 +65,10 @@ async def menu(info:Menu):
     apikey :str = info.APIKEY;
     id_user:int = info.id_user;
     retorno:dict = {};
-    if(not db.login_api_key(apikey)):
+    if(not banco.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
     else:
-        var_menu = db.pega_estado_menu(
+        var_menu = banco.pega_estado_menu(
             id_user=id_user
         );
         if(var_menu < 0):
@@ -77,7 +77,7 @@ async def menu(info:Menu):
             retorno["menu"] = var_menu;
     return retorno;
 
-@app.post("/api/menu")
+@app.post("/api/bot_telegram/menu")
 async def menu(info:Menu):
     """Insere o estado do menu
 
@@ -86,10 +86,10 @@ async def menu(info:Menu):
     apikey :str = str(info.APIKEY);
     id_user:int = int(info.id_user);
     retorno:dict = {};
-    if(not db.login_api_key(apikey)):
+    if(not banco.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
     else:
-        estado = db.cria_estado_menu(
+        estado = banco.cria_estado_menu(
             id_user=id_user
         );
         if(estado):
@@ -98,7 +98,7 @@ async def menu(info:Menu):
             retorno["Erro"] = "User já existente";
     return retorno;
 
-@app.put("/api/menu")
+@app.put("/api/bot_telegram/menu")
 async def menu(info:Update_menu):
     """Atualiza o estado do menu
 
@@ -108,12 +108,12 @@ async def menu(info:Update_menu):
     id_user:int = int(info.id_user);
     estado :int = int(info.estado);
     retorno:dict = {};
-    if(not db.login_api_key(apikey)):
+    if(not banco.login_api_key(apikey)):
         retorno["Erro"] = "User sem autorização";
     elif(estado < 0):
         retorno["Erro"] = "Valor de estado do menu menor que zero";
     else:
-        atualizado = db.atualiza_estado_menu(
+        atualizado = banco.atualiza_estado_menu(
             id_user=id_user,
             estado=estado
         );

@@ -1,48 +1,149 @@
-"""Banco de Dados abstrato"""
+"""Banco de Dados abstrato
+
+Aqui nós criaremos os moldes do Banco de Dados utilizado pelo programa.
+"""
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
 import typing
 import secrets
+import configparser
 from enum import Enum
 from typing import Union
-from pydantic import BaseModel
 from abc import ABC, abstractmethod
+from pydantic import BaseModel, validator
 #-----------------------
 # CONSTANTES
 #-----------------------
-USERNAME_ADM:str = "ADM";
-SENHA_ADM   :str = "h4fc3cpBAn2YLlO3BKw4XA";
+CONFIG = configparser.ConfigParser();
+CONFIG.read('file.ini');
+USERNAME_ADM:str = CONFIG.get("ADM","USERNAME");
+SENHA_ADM   :str = CONFIG.get("ADM","SENHA");
 #-----------------------
 # CLASSES
 #-----------------------
 class Tipo_user(Enum):
-    def __str__(self):
+    """Tipo usuário
+    
+    Aqui nós iremos escolher o tipo de usuário.
+
+    Para isso nós precisaremos escolher entre:
+    \n\tPadrao = 1.
+    \n\tAdministrador = 2.
+    """ 
+    def __str__(self) -> str:
         return self.name.upper();
     
-    def __repr__(self):
-        return f"{self}".upper();
+    def __repr__(self) -> str:
+        return f"{self}";
     
-    Padrao = 1;
+    Padrao        = 1;
     Administrador = 2;
 
-class Qrcode(BaseModel): 
-    link:str
+class Qrcode(BaseModel):
+    """Qrcode
+    
+    Aqui nós iremos colocar os dados para a criação de um QRCode.
+    
+    Para isso nós precisaremos do link que virará um QRCode.
+    """ 
+    link:str = None;
 
-class User(BaseModel): 
-    username:str
-    senha   :str
+    @validator('link')
+    def verificar_link(cls, link):
+        if((link == None) or (link == '')):
+            raise ValueError('Valor do link errado');
+        return link;
 
-class Menu(BaseModel):
-    id_user:int
-    APIKEY :str
+class User(BaseModel):
+    """User
+    
+    Aqui nós iremos colocar os dados do usuário.
+    
+    Para isso nós precisaremos:
+    \n\tUsername do novo usuário.
+    \n\tSenha do novo usuário.
+    """
+    username:str = None;
+    senha   :str = None;
 
-class Update_menu(Menu):
-    estado:int
+    @validator('username')
+    def verificar_username(cls, username):
+        if((username == None) or (username.replace(" ", "") == '')):
+            raise ValueError('Valor do username errado');
+        return username;
+    
+    @validator('senha')
+    def verificar_senha(cls, senha):
+        if((senha == None) or (senha == '')):
+            raise ValueError('Valor da senha errado');
+        return senha;
 
 class Insert_user(User):
-    APIKEY:str
-    tipo  :Tipo_user
+    """Insert User
+    
+    Aqui nós iremos colocar os dados para inserção de um usuário.
+    
+    Para isso nós precisaremos:
+    \n\tUsername do novo usuário.
+    \n\tSenha do novo usuário.
+    \n\tAPIKEY de um usuário administrador.
+    \n\tTipo do usuário.
+    """ 
+    APIKEY:str       = None;
+    tipo  :Tipo_user = None;
+
+    @validator('APIKEY')
+    def verificar_apikey(cls, apikey):
+        if len(apikey) <= 10:
+            raise ValueError('Valor de Apikey falsa');
+        return apikey;
+    
+    @validator('tipo')
+    def verificar_tipo(cls, tipo):
+        return str(tipo);
+
+class Menu(BaseModel):
+    """Menu
+    
+    Aqui nós iremos colocar os dados do menu.
+    
+    Para isso nós precisaremos:
+    \n\tID do usuário.
+    \n\tAPIKEY de um usuário administrador.
+    """
+    id_user:int = None;
+    APIKEY :str = None;
+
+    @validator('id_user')
+    def verificar_id(cls, id):
+        if(id <= 0):
+            raise ValueError('Valor do ID menor igual a zero');
+        return id;
+    
+    @validator('APIKEY')
+    def verificar_apikey(cls, apikey):
+        if(len(apikey) <= 10):
+            raise ValueError('Valor de Apikey falsa');
+        return apikey;
+
+class Update_menu(Menu):
+    """Update Menu
+    
+    Aqui nós iremos atualizar os dados do menu.
+    
+    Para isso nós precisaremos:
+    \n\tID do usuário.
+    \n\tAPIKEY de um usuário administrador.
+    \n\testado do usuário.
+    """
+    estado:int = None;
+
+    @validator('estado')
+    def verificar_estado(cls, estado):
+        if(estado < 0):
+            raise ValueError('Valor do estado menor a zero');
+        return estado;
 
 class DataBase(ABC):
     # -----------------------
@@ -401,7 +502,7 @@ class DataBase(ABC):
         
         return retorno;
     
-    def _create_apiKey(self,tipo:Tipo_user) -> str:
+    def _create_apiKey(self,tipo:str) -> str:
         """Criação de apiKey
 
         :return - str
@@ -409,7 +510,6 @@ class DataBase(ABC):
         Aqui nós criaremos a apiKey do user.
         """
         apikey:str = "";
-        tipo  :str = str(tipo);
 
         while True:
             apikey:str = secrets.token_urlsafe(16);
@@ -497,9 +597,9 @@ class DataBase(ABC):
         Aqui nós criaremos o adm.
         """
 
-        username:str       = USERNAME_ADM;
-        senha   :str       = SENHA_ADM;
-        tipo    :Tipo_user = Tipo_user(2);
+        username:str = USERNAME_ADM;
+        senha   :str = SENHA_ADM;
+        tipo    :str = str(Tipo_user(2));
 
         if(self._user_existe(username)):
             self.__get_apikey_adm();
