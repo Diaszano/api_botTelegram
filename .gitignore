@@ -1,7 +1,6 @@
 # https://github.com/github/gitignore/blob/main/Python.gitignore
 
-# Minha Pasta de senhas
-*.db
+# Minhas coisas
 .vscode
 
 # Byte-compiled / optimized / DLL files
