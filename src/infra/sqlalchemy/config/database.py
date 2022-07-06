@@ -67,7 +67,7 @@ async def get_db() -> Session:
 # Main()
 #-----------------------
 if(__name__ == "__main__"):
-    # run(reset_database());
-    run(create_database());
+    run(reset_database());
+    # run(create_database());
     # run(delete_database());
 #-----------------------

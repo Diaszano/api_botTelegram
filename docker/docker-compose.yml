@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+    postgresql:
+        image: postgres
+        container_name: postgres
+        restart: unless-stopped
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_PASSWORD: ${PG_PASS}
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_DB: ${PG_DB}
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadminPostgres
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGA_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGA_PASS}
+        ports:
+            - 5050:80
+        depends_on:
+            - postgresql
+        restart: unless-stopped
