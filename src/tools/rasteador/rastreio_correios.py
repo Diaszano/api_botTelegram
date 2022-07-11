@@ -115,19 +115,19 @@ class Rastreio:
             temp:dict  = evento_json['unidade'];
             if('nome' in temp):
                 pais:str = temp['nome'];
-                local = f"[{pais}]";
+                local = f"{pais}";
             else:
                 temp       = temp['endereco'];
                 cidade:str = temp['cidade'];
                 uf:str     = temp['uf'];
-                local = f"[{cidade}/{uf}]";
+                local = f"{cidade}/{uf}";
         if('unidadeDestino' in evento_json):
             temp:dict  = evento_json['unidadeDestino'];
             temp       = temp['endereco'];
             if(('cidade' in temp) and ('uf' in temp)):
                 cidade:str = temp['cidade'];
                 uf:str     = temp['uf'];
-                destino    = f'[{cidade}/{uf}]';
+                destino    = f'{cidade}/{uf}';
         retorno:dict = {
             'index'    : index,
             'data'     : data,
