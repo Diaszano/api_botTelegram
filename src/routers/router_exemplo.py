@@ -2,9 +2,8 @@
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
-from typing import List
-
 import sqlalchemy
+from typing import List
 from src.schemas import schemas
 from fastapi import APIRouter, status, HTTPException
 from src.infra.sqlalchemy.repositorios.exemplo import (

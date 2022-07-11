@@ -13,6 +13,7 @@ alembic = "*"
 sqlalchemy = "*"
 asyncpg = "*"
 psycopg2 = "*"
+aiohttp = "*"
 
 [packages.fastapi]
 extras = [ "all",]
