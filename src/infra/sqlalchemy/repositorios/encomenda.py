@@ -2,7 +2,6 @@
 # BIBLIOTECAS
 #-----------------------
 from typing import List
-from datetime import datetime
 from src.schemas import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
@@ -37,10 +36,10 @@ class RepositorioEncomenda:
             atualizada com o seu id.
         """
         session_user = models.Encomenda(
-            nome = encomenda.nome,
-            usuario_id     = encomenda.usuario_id,
-            rastreio_id    = encomenda.rastreio_id,
-            data_criacao   = encomenda.data_criacao
+            nome         = encomenda.nome,
+            usuario_id   = encomenda.usuario_id,
+            rastreio_id  = encomenda.rastreio_id,
+            data_criacao = encomenda.data_criacao
         );
         async with async_session() as session:
             session:Session
@@ -62,10 +61,10 @@ class RepositorioEncomenda:
             como método de inserção de dados.
         """
         stmt = insert(models.Encomenda).values(
-            nome_encomenda = encomenda.nome_encomenda,
-            usuario_id     = encomenda.usuario_id,
-            rastreio_id    = encomenda.rastreio_id,
-            data_criacao   = encomenda.data_criacao
+            nome         = encomenda.nome,
+            usuario_id   = encomenda.usuario_id,
+            rastreio_id  = encomenda.rastreio_id,
+            data_criacao = encomenda.data_criacao
         )
         async with async_session() as session:
             session:Session
@@ -134,7 +133,7 @@ class RepositorioEncomenda:
         stmt = update(models.Encomenda).where(
             models.Encomenda.id==idEncomenda
         ).values(
-            nome_encomenda = encomenda.nome_encomenda
+            nome         = encomenda.nome,
         );
         async with async_session() as session:
             session:Session

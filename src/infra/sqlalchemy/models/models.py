@@ -45,10 +45,13 @@ class Rastreio(Base):
     mensagem     = Column(String);
     atualizacao  = Column(DateTime);
     mudanca      = Column(DateTime);
+    lido         = Column(Boolean);
     solicitacoes = relationship(
         "Encomenda",
-        back_populates='rastreio'
+        back_populates='rastreio',
+        lazy='subquery'
     );
+    
 
 class Usuario(Base):
     
@@ -92,8 +95,6 @@ class Encomenda(Base):
         back_populates="encomendas",
         lazy='subquery'
     );
-    
-    
     
     rastreio_id = Column(
         Integer,

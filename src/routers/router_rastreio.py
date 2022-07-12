@@ -6,6 +6,7 @@ import sqlalchemy
 from asyncio import gather
 from src.tools import rasteador
 from src.schemas import schemas
+from pydantic import PositiveInt, constr
 from fastapi import (
     APIRouter, status, HTTPException
 )
@@ -84,7 +85,7 @@ async def adicionar_encomenda(nova_encomenda:schemas.EncomendaInsert):
     except sqlalchemy.exc.NoResultFound:
         encomenda = await RepositorioEncomenda.createReturn(
             encomenda = schemas.Encomenda(
-                nome_encomenda = nova_encomenda.nome_encomenda,
+                nome = nova_encomenda.nome,
                 usuario_id     = usuario.id,
                 rastreio_id    = rastreio.id
             ) 
@@ -95,6 +96,51 @@ async def adicionar_encomenda(nova_encomenda:schemas.EncomendaInsert):
             detail=f"{error}"
         );
     
+    return rastreio;
+
+@router.get(   "/{idTelegram}/usuario",
+                status_code=status.HTTP_200_OK,
+                response_model=schemas.UsuarioRetorno,
+                tags=["Listar"])
+async def usuario_encomendas(idTelegram:PositiveInt):
+    try:
+        usuario = await RepositorioUsuario.readIdTelegram(
+            idTelegram=idTelegram
+        );
+    except sqlalchemy.exc.NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Usuário inexistente."
+        );
+    except Exception as error:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"{error}"
+        );
+    return usuario;
+
+@router.get(   "/{codigo}/rastreio",
+                status_code=status.HTTP_200_OK,
+                response_model=schemas.RastreioRetornoCompleto,
+                tags=["Listar"])
+async def rastreio_encomendas(codigo:constr(max_length=13,
+                                            min_length=13,
+                                            regex=(
+                                            r'[a-zA-Z]{2}'
+                                            r'[0-9]{9}'
+                                            r'[a-zA-Z]{2}'))):
+    try:
+        rastreio = await RepositorioRastreio.readCodigo(codigo);
+    except sqlalchemy.exc.NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Usuário inexistente."
+        );
+    except Exception as error:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"{error}"
+        );
     return rastreio;
 #-----------------------
 # Main()

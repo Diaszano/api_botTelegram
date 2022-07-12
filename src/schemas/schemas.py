@@ -3,7 +3,7 @@
 # BIBLIOTECAS
 #-----------------------
 from random import randint
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 from pydantic import (
     BaseModel, constr, PositiveInt, 
@@ -12,6 +12,35 @@ from pydantic import (
 #-----------------------
 # CONSTANTES
 #-----------------------
+#-----------------------
+# Simples
+#-----------------------
+# Modelo simples do Usuário
+class UsuarioSimples(BaseModel):
+    id_telegram:PositiveInt = Field(
+        randint(1,99999), 
+        title="ID do Telegram", 
+        description= (
+            "Aqui é o id único "
+            "que cada usuário "
+            "tem no telegram."
+        )
+    );
+    class Config:
+        orm_mode = True;
+# Modelo simples da Encomenda
+class EncomendaSimples(BaseModel):
+    nome:str = Field(
+        "Celular", 
+        title="Nome da encomenda", 
+        description= (
+            "Aqui deve se colocar o nome "
+            "da encomenda solicitada."
+        )
+    );
+    usuario:UsuarioSimples;
+    class Config:
+        orm_mode = True;
 #-----------------------
 # Inserções
 #-----------------------
@@ -39,7 +68,7 @@ class EncomendaInsert(BaseModel):
             "encomenda."
         )
     );
-    nome_encomenda:str = Field(
+    nome:str = Field(
         "Celular", 
         title="Nome da encomenda", 
         description= (
@@ -154,7 +183,14 @@ class Rastreio(BaseModel):
             "rastreio."
         )
     );
-    
+    lido:bool = Field(
+        True, 
+        title="Lido", 
+        description= (
+            "Aqui veremos se as informações "
+            "foram lidas depois da atualização."
+        )
+    );
     class Config:
         orm_mode = True;
 # Modelo da Encomenda
@@ -277,6 +313,39 @@ class RastreioRetorno(BaseModel):
         if(isinstance(mensagem,str)):
             return eval(mensagem);
     
+    class Config:
+        orm_mode = True;
+
+class EncomendaRetorno(BaseModel):
+    rastreio:Optional[RastreioRetorno]
+    class Config:
+        orm_mode = True;
+
+class UsuarioRetorno(BaseModel):
+    encomendas:Optional[List[EncomendaRetorno]] = Field(
+        [], 
+        title="Encomendas", 
+        description= (
+            "Aqui veremos todas as encomendas "
+            "do usuário."
+        )
+    );
+    class Config:
+        orm_mode = True;
+#-----------------------
+# Completo
+#-----------------------
+# Modelo completo do Rastreio
+class RastreioRetornoCompleto(RastreioRetorno):
+    lido:bool = Field(
+        True, 
+        title="Lido", 
+        description= (
+            "Aqui veremos se as informações "
+            "foram lidas depois da atualização."
+        )
+    );
+    solicitacoes:List[EncomendaSimples];
     class Config:
         orm_mode = True;
 #-----------------------

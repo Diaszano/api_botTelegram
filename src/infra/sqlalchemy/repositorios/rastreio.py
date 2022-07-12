@@ -5,7 +5,6 @@ from typing import List
 from src.schemas import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
-from datetime import datetime, timedelta
 from sqlalchemy import update, delete, insert
 from src.infra.sqlalchemy.models import models
 from src.infra.sqlalchemy.config.database import async_session
@@ -40,7 +39,8 @@ class RepositorioRastreio:
             codigo      = rastreio.codigo,
             mensagem    = rastreio.mensagem,
             atualizacao = rastreio.atualizacao,
-            mudanca     = rastreio.mudanca
+            mudanca     = rastreio.mudanca,
+            lido        = rastreio.lido
         );
         async with async_session() as session:
             session:Session
@@ -65,7 +65,8 @@ class RepositorioRastreio:
             codigo      = rastreio.codigo,
             mensagem    = rastreio.mensagem,
             atualizacao = rastreio.atualizacao,
-            mudanca     = rastreio.mudanca
+            mudanca     = rastreio.mudanca,
+            lido        = rastreio.lido
         )
         async with async_session() as session:
             session:Session
@@ -158,12 +159,10 @@ class RepositorioRastreio:
         stmt = update(models.Rastreio).where(
             models.Rastreio.id==idRastreio
         ).values(
-            codigo      = rastreio.codigo,
             mensagem    = rastreio.mensagem,
-            status      = rastreio.status,
-            atualizacao = datetime.now(),
-            verificado  = True,
-            mudanca     = True
+            atualizacao = rastreio.atualizacao,
+            mudanca     = rastreio.mudanca,
+            lido        = rastreio.lido
         );
         async with async_session() as session:
             session:Session

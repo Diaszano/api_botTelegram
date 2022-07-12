@@ -2,7 +2,6 @@
 # BIBLIOTECAS
 #-----------------------
 from typing import List
-from datetime import datetime
 from src.schemas import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
@@ -154,12 +153,7 @@ class RepositorioUsuario:
         stmt = update(models.Usuario).where(
             models.Usuario.id==idUsuario
         ).values(
-            codigo      = usuario.codigo,
-            mensagem    = usuario.mensagem,
-            status      = usuario.status,
-            atualizacao = datetime.now(),
-            verificado  = True,
-            mudanca     = True
+            id_telegram  = usuario.id_telegram
         );
         async with async_session() as session:
             session:Session
