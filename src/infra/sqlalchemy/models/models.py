@@ -26,7 +26,8 @@ class Exemplo(Base):
     id = Column(
         Integer,
         primary_key=True,
-        autoincrement=True
+        autoincrement=True,
+        index=True
     );
     nome = Column(String);
 
@@ -37,14 +38,17 @@ class Rastreio(Base):
     id = Column(
         Integer,
         primary_key=True,
-        autoincrement=True
+        autoincrement=True,
+        index=True
     );
-    codigo      = Column(String,index=True);
-    mensagem    = Column(String);
-    status      = Column(Boolean);
-    atualizacao = Column(DateTime);
-    verificado  = Column(Boolean);
-    mudanca     = Column(Boolean);
+    codigo       = Column(String,index=True);
+    mensagem     = Column(String);
+    atualizacao  = Column(DateTime);
+    mudanca      = Column(DateTime);
+    solicitacoes = relationship(
+        "Encomenda",
+        back_populates='rastreio'
+    );
 
 class Usuario(Base):
     
@@ -53,14 +57,16 @@ class Usuario(Base):
     id = Column(
         Integer,
         primary_key=True,
-        autoincrement=True
+        autoincrement=True,
+        index=True
     );
     id_telegram = Column(Integer,index=True);
     encomendas  = relationship(
         "Encomenda",
-        backref="usuario",
+        back_populates="usuario",
         lazy='subquery'
     );
+    data_criacao = Column(DateTime);
 
 class Encomenda(Base):
     
@@ -68,9 +74,11 @@ class Encomenda(Base):
     id = Column(
         Integer,
         primary_key=True,
-        autoincrement=True
+        autoincrement=True,
+        index=True
     );
     nome       = Column(String);
+    
     usuario_id = Column(
         Integer,
         ForeignKey(
@@ -78,6 +86,15 @@ class Encomenda(Base):
             name="fk_encomenda_usuario"
         )
     );
+    
+    usuario = relationship(
+        "Usuario",
+        back_populates="encomendas",
+        lazy='subquery'
+    );
+    
+    
+    
     rastreio_id = Column(
         Integer,
         ForeignKey(
@@ -85,6 +102,13 @@ class Encomenda(Base):
             name="fk_encomenda_rastreio"
         )
     );
+    rastreio = relationship(
+        "Rastreio",
+        back_populates="solicitacoes",
+        lazy='subquery'
+    );
+    
+    data_criacao = Column(DateTime);
 #-----------------------
 # FUNÇÕES()
 #-----------------------

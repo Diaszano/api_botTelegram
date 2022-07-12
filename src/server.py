@@ -27,6 +27,6 @@ app.add_middleware(
 #-----------------------
 # Routers
 #-----------------------
-app.include_router(router_exemplo.router);
+# app.include_router(router_exemplo.router);
 app.include_router(router_rastreio.router);
 #-----------------------

@@ -2,10 +2,10 @@
 # BIBLIOTECAS
 #-----------------------
 from typing import List
+from datetime import datetime
 from src.schemas import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
-from datetime import datetime, timedelta
 from sqlalchemy import update, delete, insert
 from src.infra.sqlalchemy.models import models
 from src.infra.sqlalchemy.config.database import async_session
@@ -15,32 +15,30 @@ from src.infra.sqlalchemy.config.database import async_session
 #-----------------------
 # CLASSES
 #-----------------------
-class RepositorioRastreio:
-    """Repositório Rastreio
+class RepositorioUsuario:
+    """Repositório Usuario
     
     Nesta classe nós faremos o tratamento das informações 
     recebidas e armazenando no banco de dados.
     """
     @staticmethod
-    async def createReturn(rastreio:schemas.Rastreio) -> models.Rastreio:
+    async def createReturn(usuario:schemas.Usuario)->models.Usuario:
         """Create Return
         
-        Neste método nós faremos a inserção dos rastreio
+        Neste método nós faremos a inserção dos usuario
         no banco de dados.
 
         Args:
-            rastreio (schemas.Rastreio): Ele é uma classe que usamos
+            usuario (schemas.Usuario): Ele é uma classe que usamos
             como método de inserção de dados.
 
         Returns:
-            models.Rastreio: É o retorno do rastreio, mas de forma
+            models.Usuario: É o retorno do usuario, mas de forma
             atualizada com o seu id.
         """
-        session_user = models.Rastreio(
-            codigo      = rastreio.codigo,
-            mensagem    = rastreio.mensagem,
-            atualizacao = rastreio.atualizacao,
-            mudanca     = rastreio.mudanca
+        session_user = models.Usuario(
+            id_telegram  = usuario.id_telegram,
+            data_criacao = usuario.data_criacao
         );
         async with async_session() as session:
             session:Session
@@ -51,21 +49,19 @@ class RepositorioRastreio:
         return session_user;
 
     @staticmethod
-    async def create(rastreio:schemas.Rastreio) -> None:
+    async def create(usuario:schemas.Usuario) -> None:
         """Create
         
-        Neste método nós faremos a inserção dos rastreio
+        Neste método nós faremos a inserção dos usuario
         no banco de dados.
 
         Args:
-            rastreio (schemas.Rastreio): Ele é uma classe que usamos
+            usuario (schemas.Usuario): Ele é uma classe que usamos
             como método de inserção de dados.
         """
-        stmt = insert(models.Rastreio).values(
-            codigo      = rastreio.codigo,
-            mensagem    = rastreio.mensagem,
-            atualizacao = rastreio.atualizacao,
-            mudanca     = rastreio.mudanca
+        stmt = insert(models.Usuario).values(
+            id_telegram  = usuario.id_telegram,
+            data_criacao = usuario.data_criacao
         )
         async with async_session() as session:
             session:Session
@@ -74,17 +70,17 @@ class RepositorioRastreio:
             await session.commit();
     
     @staticmethod
-    async def read() -> List[models.Rastreio]:
+    async def read() -> List[models.Usuario]:
         """Read
         
-        Neste método nós faremos a leitura dos rastreios
+        Neste método nós faremos a leitura dos usuários
         no banco de dados.
 
         Returns:
-            List[models.Rastreio]:
+            List[models.Usuario]:
         """
         retorno = None;
-        stmt    = select(models.Rastreio);
+        stmt    = select(models.Usuario);
         async with async_session() as session:
             session:Session
             
@@ -93,22 +89,22 @@ class RepositorioRastreio:
         return retorno;
 
     @staticmethod
-    async def readId(idRastreio:int) -> models.Rastreio:
+    async def readId(idUsuario:int) -> models.Usuario:
         """Read Id
         
-        Neste método nós faremos a leitura do rastreio
+        Neste método nós faremos a leitura do usuario
         com o Id passado.
 
         Args:
-            idRastreio (int): necessitamos do id do 
-            rastreio para ser buscado no banco.
+            idUsuario (int): necessitamos do id do 
+            usuario para ser buscado no banco.
 
         Returns:
-            models.Rastreio
+            models.Usuario
         """
         retorno = None;
-        stmt    = select(models.Rastreio).where(
-            models.Rastreio.id==idRastreio
+        stmt    = select(models.Usuario).where(
+            models.Usuario.id==idUsuario
         );
         async with async_session() as session:
             session:Session
@@ -118,22 +114,22 @@ class RepositorioRastreio:
         return retorno;
     
     @staticmethod
-    async def readCodigo(codigo:str) -> models.Rastreio:
+    async def readIdTelegram(idTelegram:str) -> models.Usuario:
         """Read Id
         
-        Neste método nós faremos a leitura do rastreio
+        Neste método nós faremos a leitura do usuario
         com o Id passado.
 
         Args:
             Codigo (str): necessitamos do id do 
-            rastreio para ser buscado no banco.
+            usuario para ser buscado no banco.
 
         Returns:
-            models.Rastreio
+            models.Usuario
         """
         retorno = None;
-        stmt    = select(models.Rastreio).where(
-            models.Rastreio.codigo==codigo
+        stmt    = select(models.Usuario).where(
+            models.Usuario.id_telegram==idTelegram
         );
         async with async_session() as session:
             session:Session
@@ -143,24 +139,24 @@ class RepositorioRastreio:
         return retorno;
 
     @staticmethod
-    async def update(idRastreio:int,rastreio:schemas.Rastreio) -> None:
+    async def update(idUsuario:int,usuario:schemas.Usuario) -> None:
         """Update
         
-        Neste método nós faremos a atualização do rastreio
+        Neste método nós faremos a atualização do usuario
         com o Id passado.
 
         Args:
-            idRastreio (int): necessitamos do id do 
-            rastreio para ser buscado no banco.
-            rastreio (schemas.Rastreio): Ele é uma classe que usamos
+            idUsuario (int): necessitamos do id do 
+            usuario para ser buscado no banco.
+            usuario (schemas.Usuario): Ele é uma classe que usamos
             como método de atualização dos dados.
         """
-        stmt = update(models.Rastreio).where(
-            models.Rastreio.id==idRastreio
+        stmt = update(models.Usuario).where(
+            models.Usuario.id==idUsuario
         ).values(
-            codigo      = rastreio.codigo,
-            mensagem    = rastreio.mensagem,
-            status      = rastreio.status,
+            codigo      = usuario.codigo,
+            mensagem    = usuario.mensagem,
+            status      = usuario.status,
             atualizacao = datetime.now(),
             verificado  = True,
             mudanca     = True
@@ -172,18 +168,18 @@ class RepositorioRastreio:
             await session.commit();
     
     @staticmethod
-    async def delete(idRastreio:int) -> None:
+    async def delete(idUsuario:int) -> None:
         """Delete
         
-        Neste método nós faremos a remoção de um rastreio
+        Neste método nós faremos a remoção de um usuario
         com o Id passado.
 
         Args:
-            idRastreio (int): necessitamos do id do 
-            rastreio para ser buscado no banco.
+            idUsuario (int): necessitamos do id do 
+            usuario para ser buscado no banco.
         """
-        stmt = delete(models.Rastreio).where(
-            models.Rastreio.id==idRastreio
+        stmt = delete(models.Usuario).where(
+            models.Usuario.id==idUsuario
         );
         async with async_session() as session:
             session:Session

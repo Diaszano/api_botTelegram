@@ -1,0 +1,8 @@
+uvicorn src.server:app --reload
+    - Roda o servidor.
+python3 src/infra/sqlalchemy/config/database.py
+    - Limpa o banco de dados.
+alembic revision --autogenerate -m "Mensagem de mudança"
+    - Faz a revisão no banco.
+alembic upgrade head
+    - Aplica as mudanças feitas na revisão.

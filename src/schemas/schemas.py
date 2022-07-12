@@ -1,16 +1,59 @@
-"""Schema"""
+"""Schemas"""
 #-----------------------
 # BIBLIOTECAS
 #-----------------------
 from random import randint
-from typing import List, Optional
-from pydantic import BaseModel, constr, PositiveInt, Field
+from typing import Optional
+from datetime import datetime
+from pydantic import (
+    BaseModel, constr, PositiveInt, 
+    Field, validator
+)
 #-----------------------
 # CONSTANTES
 #-----------------------
 #-----------------------
-# CLASSES
+# Inserções
 #-----------------------
+# Inserções das Encomendas
+class EncomendaInsert(BaseModel):
+    id_telegram:PositiveInt = Field(
+        randint(1,99999), 
+        title="ID do Telegram", 
+        description= (
+            "Aqui é o id único "
+            "que cada usuário "
+            "tem no telegram."
+        )
+    );
+    codigo:constr(
+        max_length=13,
+        min_length=13,
+        regex=r'[a-zA-Z]{2}[0-9]{9}[a-zA-Z]{2}'
+    ) = Field(
+        "LD280110210RC", 
+        title="Código", 
+        description= (
+            "Aqui deve ser colocado o "
+            "código de rastreio da "
+            "encomenda."
+        )
+    );
+    nome_encomenda:str = Field(
+        "Celular", 
+        title="Nome da encomenda", 
+        description= (
+            "Aqui deve se colocar o nome "
+            "da encomenda solicitada."
+        )
+    );
+    
+    class Config:
+        orm_mode = True;
+#-----------------------
+# Modelos do Banco
+#-----------------------
+# Modelo do Exemplo
 class Exemplo(BaseModel):
     """Exemplo
     
@@ -23,29 +66,51 @@ class Exemplo(BaseModel):
     
     class Config:
         orm_mode = True;
-
-class RetornoPadrao(BaseModel):
-    """Exemplo
+# Modelo do Usuário
+class Usuario(BaseModel):
+    id:Optional[PositiveInt] = Field(
+        randint(1,99999), 
+        title="ID do Usuário", 
+        description= (
+            "Aqui é o id único "
+            "que cada usuário "
+            "tem na api."
+        )
+    );
     
-    Essa classe serve como modelo 
-    de dados que nós operamos nesta 
-    API.
-    """
-    status :Optional[bool] = True;
-    message:Optional[str]  = "Execução com sucesso";
-    detail :Optional[str]  = "Tudo ocorreu como o esperado";
+    id_telegram:PositiveInt = Field(
+        randint(1,99999), 
+        title="ID do Telegram", 
+        description= (
+            "Aqui é o id único "
+            "que cada usuário "
+            "tem no telegram."
+        )
+    );
     
+    data_criacao:Optional[datetime] = Field(
+        datetime.now(), 
+        title="Data da Criação", 
+        description= (
+            "Aqui guardaremos a data da "
+            "criação do usuário na api. "
+        )
+    );
     
     class Config:
         orm_mode = True;
-
+# Modelo do Rastreio
 class Rastreio(BaseModel):
-    """Rastreio
+    id:Optional[PositiveInt] = Field(
+        randint(1,99999), 
+        title="ID do Rastreio", 
+        description= (
+            "Aqui é o id único "
+            "que cada Rastreio "
+            "tem na api."
+        )
+    );
     
-    Essa classe serve como modelo 
-    de dados que nós operamos nesta 
-    API.
-    """
     codigo:constr(
         max_length=13,
         min_length=13,
@@ -60,97 +125,51 @@ class Rastreio(BaseModel):
         )
     );
     
+    mensagem:Optional[str] = Field(
+        "mensagem...", 
+        title="Mensagem", 
+        description= (
+            "Aqui retornará o mensagem "
+            "do rastreio com todas as "
+            "informações da "
+            "encomenda rastreada."
+        )
+    );
+    
+    atualizacao:datetime = Field(
+        datetime.now(), 
+        title="Data da Atualização", 
+        description= (
+            "Aqui guardaremos a data da "
+            "atualização do rastreio na api. "
+        )
+    );
+    
+    mudanca:datetime = Field(
+        datetime.now(), 
+        title="Mudança", 
+        description= (
+            "Aqui veremos se teve mudança "
+            "na última verificação do "
+            "rastreio."
+        )
+    );
+    
     class Config:
         orm_mode = True;
-
-class RastreioReturn(Rastreio):
-    """Encomenda
-    
-    Essa classe serve como modelo 
-    de dados que nós operamos nesta 
-    API.
-    """
-    mensagem:list = Field(
-        "mensagem...", 
-        title="Mensagem", 
-        description= (
-            "Aqui retornará o mensagem "
-            "do rastreio com todas as "
-            "informações da "
-            "encomenda rastreada."
-        )
-    );
-    status:bool = Field(
-        True, 
-        title="status", 
-        description= (
-            "Aqui retornará o status "
-            "em forma booliana da "
-            "encomenda rastreada."
-        )
-    );
-
-class RastreioReturnId(Rastreio):
-    """Encomenda
-    
-    Essa classe serve como modelo 
-    de dados que nós operamos nesta 
-    API.
-    """
-    mensagem:list = Field(
-        "mensagem...", 
-        title="Mensagem", 
-        description= (
-            "Aqui retornará o mensagem "
-            "do rastreio com todas as "
-            "informações da "
-            "encomenda rastreada."
-        )
-    );
-    status:bool = Field(
-        True, 
-        title="status", 
-        description= (
-            "Aqui retornará o status "
-            "em forma booliana da "
-            "encomenda rastreada."
-        )
-    );
-
-class RastreioInsert(Rastreio):
-    id:Optional[int] = None;
-    mensagem:str = Field(
-        "mensagem...", 
-        title="Mensagem", 
-        description= (
-            "Aqui retornará o mensagem "
-            "do rastreio com todas as "
-            "informações da "
-            "encomenda rastreada."
-        )
-    );
-    status:bool = Field(
-        True, 
-        title="status", 
-        description= (
-            "Aqui retornará o status "
-            "em forma booliana da "
-            "encomenda rastreada."
-        )
-    );
-
-
-class RastreioBot(RastreioInsert):
-    id_telegram:PositiveInt = Field(
+# Modelo da Encomenda
+class Encomenda(BaseModel):
+    id:Optional[PositiveInt] = Field(
         randint(1,99999), 
-        title="ID do Telegram", 
+        title="ID da Encomenda", 
         description= (
             "Aqui é o id único "
-            "que cada usuário "
-            "tem no telegram."
+            "que cada encomenda "
+            "tem na api."
         )
     );
-    nome_encomenda:str = Field(
+    
+    nome:str = Field(
         "Celular", 
         title="Nome da encomenda", 
         description= (
@@ -159,19 +178,105 @@ class RastreioBot(RastreioInsert):
         )
     );
     
-# encomendas:List[Encomenda] = Field(
-#         None,
-#         title="Encomendas", 
-#         description=(
-#             "Aqui teremos a lista com "
-#             "todas encomendas "
-#             "rastreadas pelo usuário"
-#         )
-#     )
+    usuario_id:PositiveInt = Field(
+        randint(1,99999), 
+        title="ID do Usuário", 
+        description= (
+            "Aqui é o id único "
+            "que cada usuário "
+            "tem na api."
+        )
+    );
+    
+    rastreio_id:PositiveInt = Field(
+        randint(1,99999), 
+        title="ID do Rastreio", 
+        description= (
+            "Aqui é o id único "
+            "que cada Rastreio "
+            "tem na api."
+        )
+    );
+    
+    data_criacao:Optional[datetime] = Field(
+        datetime.now(), 
+        title="Data da Criação", 
+        description= (
+            "Aqui guardaremos a data da "
+            "criação da encomenda na api. "
+        )
+    );
+    
+    class Config:
+        orm_mode = True;
 #-----------------------
-# FUNÇÕES()
+# Retornos
 #-----------------------
-#-----------------------
-# Main()
-#-----------------------
+# Retornos Padrões
+class RetornoPadrao(BaseModel):
+    """Exemplo
+    
+    Essa classe serve como modelo 
+    de dados que nós operamos nesta 
+    API.
+    """
+    status :Optional[bool] = True;
+    message:Optional[str]  = "Execução com sucesso";
+    detail :Optional[str]  = "Tudo ocorreu como o esperado";
+    
+    class Config:
+        orm_mode = True;
+# Retornos Rastreios
+class RastreioRetorno(BaseModel):
+    codigo:constr(
+        max_length=13,
+        min_length=13,
+        regex=r'[a-zA-Z]{2}[0-9]{9}[a-zA-Z]{2}'
+    ) = Field(
+        "LD280110210RC", 
+        title="Código", 
+        description= (
+            "Aqui deve ser colocado o "
+            "código de rastreio da "
+            "encomenda."
+        )
+    );
+    
+    mensagem:Optional[list] = Field(
+        "mensagem...", 
+        title="Mensagem", 
+        description= (
+            "Aqui retornará o mensagem "
+            "do rastreio com todas as "
+            "informações da "
+            "encomenda rastreada."
+        )
+    );
+    
+    atualizacao:datetime = Field(
+        datetime.now(), 
+        title="Data da Atualização", 
+        description= (
+            "Aqui guardaremos a data da "
+            "atualização do rastreio na api. "
+        )
+    );
+    
+    mudanca:datetime = Field(
+        datetime.now(), 
+        title="Mudança", 
+        description= (
+            "Aqui veremos se teve mudança "
+            "na última verificação do "
+            "rastreio."
+        )
+    );
+    
+    @validator("mensagem", pre=True, each_item=True)
+    def transformar_mensagem(cls,mensagem):
+        if(isinstance(mensagem,str)):
+            return eval(mensagem);
+    
+    class Config:
+        orm_mode = True;
 #-----------------------
